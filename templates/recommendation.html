@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <header>
+        <h1>Movie Recommendation</h1>
+    </header>
+    <main>
+        <h2>Find Similar Movies</h2>
+        <form method="post">
+            <label for="movie_name">Enter a movie name:</label>
+            <input type="text" id="movie_name" name="movie_name" placeholder="e.g., Inception">
+            <input type="submit" value="Get Recommendations">
+        </form>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% elif recommendations %}
+            <h3>Recommendations for "{{ movie_name }}":</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movie in recommendations %}
+                        <tr>
+                            <td>{{ movie.Title }}</td>
+                            <td>{{ movie.Genre }}</td>
+                            <td>{{ movie.Rating }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <a href="/"><button>Back to Home</button></a>
+    </main>
+    <footer>
+        <p>&copy; 2025 Movie Explorer</p>
+    </footer>
+</body>
+</html>
