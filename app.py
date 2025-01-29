@@ -18,23 +18,30 @@ def index():
 
 @app.route('/visualize/genre')
 def visualize_genre():
-    genre_avg_rating = df.groupby('Genre')['Rating'].mean()
-    
-    # Create a figure with more space for labels
-    fig, ax = plt.subplots(figsize=(10, 6))
-    
-    # Plot the bar chart and improve the layout
-    genre_avg_rating.plot(kind='bar', color='lightblue', ax=ax)
-    ax.set_title('Average Rating by Genre', fontsize=16)
-    ax.set_xlabel('Genre', fontsize=14)
-    ax.set_ylabel('Average Rating', fontsize=14)
-    plt.xticks(rotation=45, ha='right', fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()  # Adjust layout to prevent overlap
+    # Count number of movies per genre
+    genre_counts = df['Genre'].value_counts()
 
-    # Convert the plot to a base64 string to display in HTML
+    # Group small genres into 'Other'
+    top_n = 7  # Show only top 7 genres
+    top_genres = genre_counts.nlargest(top_n).index
+    df['Genre_Visual'] = df['Genre'].apply(lambda x: x if x in top_genres else 'Other')
+
+    # Compute new average ratings for visualization
+    genre_avg_rating = df.groupby('Genre_Visual')['Rating'].mean().sort_values()
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 6))  # Increase size
+    genre_avg_rating.plot(kind='barh', color='skyblue', ax=ax)  # Horizontal bars
+    ax.set_title('Average Rating by Genre (Top 7 + Other)', fontsize=14)
+    ax.set_xlabel('Rating', fontsize=12)
+    ax.set_ylabel('Genre', fontsize=12)
+    ax.grid(axis='x', linestyle='--', alpha=0.7)  # Grid for better readability
+
+    plt.tight_layout()  # Prevent text cutoff
+
+    # Convert plot to image
     img = io.BytesIO()
-    plt.savefig(img, format='png', bbox_inches='tight')  # Use bbox_inches='tight' to avoid cut-off
+    plt.savefig(img, format='png', bbox_inches="tight")
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()
     plt.close(fig)
