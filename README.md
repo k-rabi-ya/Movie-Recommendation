@@ -5,7 +5,7 @@ A Flask web app to explore movies, visualize genre ratings, and get recommendati
 - Movie recommendations based on descriptions
  Setup
 1. Clone the repo:
-   git clone https://github.com/yourusername/movie-explorer.git
+   git clone https://github.com/k-rabi-ya/Movie-Recommendation.git
    cd movie-explorer
 
 2. Install dependencies:
